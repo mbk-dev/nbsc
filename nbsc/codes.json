@@ -1,9 +1,11 @@
 {
   "_meta": {
-    "description": "Maps legacy NBS series codes to new UUID-based API identifiers. Each code may span multiple period leaves.",
+    "description": "Maps series codes to new UUID-based API identifiers. Each code may span multiple period leaves.",
     "root_monthly": "fc982599aa684be7969d7b90b1bd0e84",
+    "root_quarterly": "a94b8b7365a94874968cabbe392cf679",
     "last_verified": "2026-05-27"
   },
+
   "A01010G01": {
     "description": "CPI (same month last year=100), 2021+",
     "freq": "month",
@@ -85,6 +87,239 @@
         "indicator_id": "384ddbda2edc47969caa98263f16231b",
         "year_start": 2000,
         "year_end": 2015
+      }
+    ]
+  },
+
+  "GDP_NOMINAL_Q": {
+    "description": "GDP at current prices, quarterly value (100M CNY)",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "28d936104e304aa191e338eb82b6dc09",
+        "indicator_id": "d22612f09aeb4241bc557ef0ac61b3ba",
+        "year_start": 1992,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_NOMINAL_CUM": {
+    "description": "GDP at current prices, cumulative value (100M CNY)",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "28d936104e304aa191e338eb82b6dc09",
+        "indicator_id": "8c5fab362d124fa7b91af833b3bd7397",
+        "year_start": 1992,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_REAL_Q": {
+    "description": "GDP at constant prices, quarterly value (100M CNY)",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "b676631776424600bdae363df047559f",
+        "indicator_id": "b704155cd926437b8ee9c65fe058210d",
+        "year_start": 2011,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_REAL_CUM": {
+    "description": "GDP at constant prices, cumulative value (100M CNY)",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "b676631776424600bdae363df047559f",
+        "indicator_id": "e33efbac437d4d10b5ccae6ad9d923b9",
+        "year_start": 2011,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_INDEX_Q": {
+    "description": "GDP index (same period last year=100), quarterly",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "f9b694c9b79e4ce5958bc88c6410fa67",
+        "indicator_id": "170e7f00f8c24ede863c0526b42ae81f",
+        "year_start": 1992,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_INDEX_CUM": {
+    "description": "GDP index (same period last year=100), cumulative",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "f9b694c9b79e4ce5958bc88c6410fa67",
+        "indicator_id": "f5b82b2b6ad345a29a337d256a9d5ded",
+        "year_start": 1992,
+        "year_end": null
+      }
+    ]
+  },
+  "GDP_QOQ": {
+    "description": "GDP quarter-on-quarter growth rate (%)",
+    "freq": "quarter",
+    "leaves": [
+      {
+        "cid": "2b0aa179980e41b8b636037ebae01d91",
+        "indicator_id": "88bcaf76058e49b08a45b14a204b2d3d",
+        "year_start": 2011,
+        "year_end": null
+      }
+    ]
+  },
+
+  "PMI_MANUFACTURING": {
+    "description": "Manufacturing PMI (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "93ffbb1aa85740d3aa2618371508b606",
+        "indicator_id": "a09aa989bdcf4cffa2021795722eb916",
+        "year_start": 2005,
+        "year_end": null
+      }
+    ]
+  },
+  "PMI_NON_MANUFACTURING": {
+    "description": "Non-manufacturing business activity index (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "7a64a6e25aec4a8e9dde044ecd9e2cce",
+        "indicator_id": "88a150208f6e4a1db8babe41ae700f66",
+        "year_start": 2007,
+        "year_end": null
+      }
+    ]
+  },
+  "PMI_COMPOSITE": {
+    "description": "Composite PMI output index (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "455378e1c3264a32875768a35ba5de76",
+        "indicator_id": "55cdc89fa122446aa263912bdf14a540",
+        "year_start": 2017,
+        "year_end": null
+      }
+    ]
+  },
+
+  "M2": {
+    "description": "Money supply M2, end-of-period (100M CNY)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "f3c0ae453a54424489af41de315ec592",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+  "M2_YOY": {
+    "description": "Money supply M2, year-on-year growth (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "e03f2232631f41cd9d754a7d7feb4a81",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+  "M1": {
+    "description": "Money supply M1, end-of-period (100M CNY)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "add08d4a1ca049158166f126e169edde",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+  "M1_YOY": {
+    "description": "Money supply M1, year-on-year growth (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "640401d3351b4b868dea28f89f410a54",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+  "M0": {
+    "description": "Money in circulation M0, end-of-period (100M CNY)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "bd67997414b147a08d4aa03d146f4486",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+  "M0_YOY": {
+    "description": "Money in circulation M0, year-on-year growth (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "82130c6621a745cda3d64b090e733383",
+        "indicator_id": "db7891fb8f3c4eb2a4d71a9955eba8c7",
+        "year_start": 1999,
+        "year_end": null
+      }
+    ]
+  },
+
+  "UNEMPLOYMENT": {
+    "description": "National urban survey unemployment rate (%)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "ee3b7046b390415b9b7745e3d16f6052",
+        "indicator_id": "3888eac6062945a79c8a27e5f13d4953",
+        "year_start": 2018,
+        "year_end": null
+      }
+    ]
+  },
+
+  "PPI_FACTORY_YOY": {
+    "description": "Producer ex-factory price index (same month last year=100)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "60e8b361f11c4a878c652a6487a25561",
+        "indicator_id": "150633e52b9a470a9a9fd1b296dd6c5b",
+        "year_start": 1996,
+        "year_end": null
+      }
+    ]
+  },
+  "PPI_FACTORY_MOM": {
+    "description": "Producer ex-factory price index (preceding month=100)",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "677cfbb4f06941af8c1761c4804e58cf",
+        "indicator_id": "e64079bae9064aebad1c4c5fe0c8a6ef",
+        "year_start": 2011,
+        "year_end": null
       }
     ]
   }

@@ -31,6 +31,7 @@ _HEADERS = {
 
 _DEFAULT_TIMEOUT = 15
 _ROOT_MONTHLY = "fc982599aa684be7969d7b90b1bd0e84"
+_ROOT_QUARTERLY = "a94b8b7365a94874968cabbe392cf679"
 
 _codes: Optional[dict] = None
 
@@ -70,7 +71,13 @@ def _dts_from_legacy(periods: str, freq: str) -> str:
       - ``'LATEST10'`` / ``'LAST5'`` → computed range ending at current month
       - ``'2003,2012'``  → widest range ``200301MM-201212MM`` + warning
     """
-    suffix = "MM" if freq == "month" else "A"
+    match freq:
+        case "month":
+            suffix = "MM"
+        case "quarter":
+            suffix = "SS"
+        case _:
+            suffix = "A"
     periods = periods.strip()
 
     # LATEST<N> / LAST<N>
@@ -82,6 +89,10 @@ def _dts_from_legacy(periods: str, freq: str) -> str:
             end = now
             start = end - pd.DateOffset(months=n - 1)
             return f"{start.strftime('%Y%m')}{suffix}-{end.strftime('%Y%m')}{suffix}"
+        elif freq == "quarter":
+            end_year = now.year
+            start_year = end_year - (n - 1) // 4
+            return f"{start_year}01{suffix}-{end_year}04{suffix}"
         else:
             end_year = now.year
             start_year = end_year - n + 1
@@ -98,6 +109,8 @@ def _dts_from_legacy(periods: str, freq: str) -> str:
         start_year, end_year = min(years), max(years)
         if freq == "month":
             return f"{start_year}01{suffix}-{end_year}12{suffix}"
+        elif freq == "quarter":
+            return f"{start_year}01{suffix}-{end_year}04{suffix}"
         return f"{start_year}{suffix}-{end_year}{suffix}"
 
     # Range: '2016-2020'
@@ -106,6 +119,8 @@ def _dts_from_legacy(periods: str, freq: str) -> str:
         start_year, end_year = m.group(1), m.group(2)
         if freq == "month":
             return f"{start_year}01{suffix}-{end_year}12{suffix}"
+        elif freq == "quarter":
+            return f"{start_year}01{suffix}-{end_year}04{suffix}"
         return f"{start_year}{suffix}-{end_year}{suffix}"
 
     # Single year: '2026'
@@ -114,6 +129,8 @@ def _dts_from_legacy(periods: str, freq: str) -> str:
         year = m.group(1)
         if freq == "month":
             return f"{year}01{suffix}-{year}12{suffix}"
+        elif freq == "quarter":
+            return f"{year}01{suffix}-{year}04{suffix}"
         return f"{year}{suffix}-{year}{suffix}"
 
     raise ValueError(f"Unsupported period format: '{periods}'")
@@ -145,12 +162,18 @@ def _parse_year_range(periods: str) -> tuple[int, int]:
     raise ValueError(f"Cannot parse year range from: '{periods}'")
 
 
+def _root_for_freq(freq: str) -> str:
+    if freq == "quarter":
+        return _ROOT_QUARTERLY
+    return _ROOT_MONTHLY
+
+
 def fetch_series(
     cid: str,
     indicator_id: str,
     dts: str,
     *,
-    root_id: str = _ROOT_MONTHLY,
+    root_id: str | None = None,
     freq: str = "month",
 ) -> pd.Series:
     """Fetch a single series from the NBS public-data API.
@@ -163,11 +186,14 @@ def fetch_series(
         Indicator UUID within the catalog.
     dts : str
         Period range in new format, e.g. ``'202101MM-202612MM'``.
-    root_id : str
-        Root catalog UUID (default: monthly data root).
+    root_id : str | None
+        Root catalog UUID. Auto-selected from *freq* when ``None``.
     freq : str
-        ``'month'`` or ``'year'``.
+        ``'month'``, ``'quarter'``, or ``'year'``.
     """
+    if root_id is None:
+        root_id = _root_for_freq(freq)
+
     body = {
         "cid": cid,
         "indicatorIds": [indicator_id],
@@ -196,15 +222,15 @@ def fetch_series(
     if not data:
         return pd.Series(dtype="float64")
 
-    date_fmt = "%Y%m" if freq == "month" else "%Y"
     records: dict[pd.Timestamp, float] = {}
     for period_block in data:
         code = period_block.get("code", "")
-        # Strip the type suffix (e.g. '202604MM' → '202604', '2026A' → '2026')
         date_str = re.sub(r"[A-Za-z]+$", "", code)
         if not date_str:
             continue
-        dt = pd.to_datetime(date_str, format=date_fmt)
+        dt = _parse_period_code(date_str, freq)
+        if dt is None:
+            continue
         for val_entry in period_block.get("values", []):
             raw = val_entry.get("value")
             if raw is not None and raw != "":
@@ -213,6 +239,20 @@ def fetch_series(
     s = pd.Series(records, dtype="float64")
     s = s.sort_index()
     return s
+
+
+def _parse_period_code(date_str: str, freq: str) -> pd.Timestamp | None:
+    if freq == "quarter":
+        # '202601' → Q1 2026: quarter number 01-04
+        if len(date_str) >= 6:
+            year = int(date_str[:4])
+            q = int(date_str[4:6])
+            if 1 <= q <= 4:
+                month = q * 3
+                return pd.Timestamp(year=year, month=month, day=1)
+        return None
+    date_fmt = "%Y%m" if freq == "month" else "%Y"
+    return pd.to_datetime(date_str, format=date_fmt)
 
 
 def load_nbs_web(series: str, periods: str, freq: str) -> pd.Series:
@@ -229,7 +269,7 @@ def load_nbs_web(series: str, periods: str, freq: str) -> pd.Series:
     periods : str
         Period specification: ``'2020-2022'``, ``'LATEST10'``, ``'2026'``, etc.
     freq : str
-        ``'month'`` or ``'year'``.
+        ``'month'``, ``'quarter'``, or ``'year'``.
     """
     codes = _load_codes()
     if series not in codes:

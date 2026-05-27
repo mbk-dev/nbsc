@@ -58,6 +58,19 @@ class TestDtsFromLegacy:
     def test_range_with_spaces(self):
         assert _dts_from_legacy("2016 - 2020", "month") == "201601MM-202012MM"
 
+    def test_single_year_quarterly(self):
+        assert _dts_from_legacy("2026", "quarter") == "202601SS-202604SS"
+
+    def test_range_quarterly(self):
+        assert _dts_from_legacy("2020-2024", "quarter") == "202001SS-202404SS"
+
+    def test_latest_quarterly(self):
+        result = _dts_from_legacy("LATEST8", "quarter")
+        assert result.endswith("SS")
+        parts = result.split("-")
+        assert parts[0].endswith("SS")
+        assert parts[1].endswith("SS")
+
 
 class TestParseYearRange:
     def test_single_year(self):
