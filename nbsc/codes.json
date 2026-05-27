@@ -1,0 +1,91 @@
+{
+  "_meta": {
+    "description": "Maps legacy NBS series codes to new UUID-based API identifiers. Each code may span multiple period leaves.",
+    "root_monthly": "fc982599aa684be7969d7b90b1bd0e84",
+    "last_verified": "2026-05-27"
+  },
+  "A01010G01": {
+    "description": "CPI (same month last year=100), 2021+",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "5c7452825c7c4dcba391db5ca7f335c5",
+        "indicator_id": "53180dfb9c14411ba4b762307c85920c",
+        "year_start": 2026,
+        "year_end": null
+      },
+      {
+        "cid": "809d2522b0fe4be89142650341b19083",
+        "indicator_id": "4ae9047687934a6390984c21d6ddab96",
+        "year_start": 2021,
+        "year_end": 2025
+      }
+    ]
+  },
+  "A01010101": {
+    "description": "CPI (same month last year=100), 2016-2020",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "9d4eec43537742a7ab5d63db97fa2f51",
+        "indicator_id": "e5c318ffdbbc4d38898e52b52267eb25",
+        "year_start": 2016,
+        "year_end": 2020
+      }
+    ]
+  },
+  "A01010201": {
+    "description": "CPI (same month last year=100), 1987-2015",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "954cfd7597e34b919ec71caf6aeead51",
+        "indicator_id": "4c1065dd4e984b25a21190c843551697",
+        "year_start": 1987,
+        "year_end": 2015
+      }
+    ]
+  },
+  "A01030G01": {
+    "description": "CPI (preceding month=100), 2021+",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "b4fad2cf9e0e4af7815b7e9e2e95c5c7",
+        "indicator_id": "f3904a1f5a384d54a3944ec6e2df3d1c",
+        "year_start": 2026,
+        "year_end": null
+      },
+      {
+        "cid": "e6664817f0cd427783cd397770695634",
+        "indicator_id": "e437d965279d41ceb9ace591b62f6ffc",
+        "year_start": 2021,
+        "year_end": 2025
+      }
+    ]
+  },
+  "A01030101": {
+    "description": "CPI (preceding month=100), 2016-2020",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "42132fae9f2244818f0480b4c422615c",
+        "indicator_id": "0dc091b5194c46afaf10369d5c55676a",
+        "year_start": 2016,
+        "year_end": 2020
+      }
+    ]
+  },
+  "A01030201": {
+    "description": "CPI (preceding month=100), 2001-2015",
+    "freq": "month",
+    "leaves": [
+      {
+        "cid": "bc985d1741a94451880c606022a8fe00",
+        "indicator_id": "384ddbda2edc47969caa98263f16231b",
+        "year_start": 2000,
+        "year_end": 2015
+      }
+    ]
+  }
+}
