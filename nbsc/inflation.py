@@ -110,6 +110,6 @@ def check_for_zero(s: pd.Series) -> pd.Series:
 
     NBSC shows zero value always for the last month statistics if the official data is not published yet.
     """
-    if s[0] == 0:
-        s = s[1:]
+    if len(s) > 0 and s.iloc[0] == 0:
+        s = s.iloc[1:]
     return s

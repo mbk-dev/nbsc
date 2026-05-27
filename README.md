@@ -1,89 +1,115 @@
-[![Python](https://img.shields.io/badge/python-v3-brightgreen.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-v3.10+-brightgreen.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # nbsc: Python interface to National Bureau of Statistics of China (NBSC) API
-Known data codes (series) for API requests...
 
-## Consumer Price Index (CPI)
-### Annual CPI
-**dbcode="hgnd"**  
-A090201 - Consumer Price Index (1978=100)  
-A090302 - Consumer Price Index (1978=100)  
+Fetch macroeconomic time series (CPI, GDP, etc.) from China's NBS public data portal.
 
-### Monthly CPI
-**dbcode="hgyd"**  
-Last Year = 100  
-A01010G01 - Consumer Price Index (The same month last year=100) 2021 -  
-A01010101 - Consumer Price Index (The same month last year=100) 2016 - 2020  
-A01010201 - Consumer Price Index (The same month last year=100) 1987 - 2015 
- 
-The same period last year=100  
-A01020101 - Consumer Price Index (The same period last year=100) 2016 -  
-A01020201 - Consumer Price Index (The same period last year=100) 1995 - 2015
+## Installation
 
-preceding month=100  
-A01030G01 - Consumer Price Index (preceding month=100) 2021 -  
-A01030101 - Consumer Price Index (preceding month=100) 2016 - 2020  
-A01030201 - Consumer Price Index (preceding month=100) 2001 - 2015
+```bash
+pip install git+https://github.com/mbk-dev/nbsc.git
+```
 
-## Gross Domestic Product (GDP) - annual data
-**dbcode="hgnd"**  
-A020102 - Gross Domestic Product (GDP)  
-A020106 - Per Capita GDP  
-A020101 - Gross National Income  
+## Quick start
 
-## Monthly Economic Statistics
-**dbcode="hgnd"**  
-A07040801   Retail Sales of Enterprises above Designated Size, Household Appliances and Video Equipments, Current Period (100 million yuan) 2001-  
-A07040802   Retail Sales of Enterprises above Designated Size, Household Appliances and Video Equipments, Accumulated (100 million yuan) 2001-  
-A07040803   Retail Sales of Enterprises above Designated Size, Household Appliances and Video Equipments, Growth Rate (The same period last year=100)(%) 2001-  
-A07040804   Retail Sales of Enterprises above Designated Size, Household Appliances and Video Equipments, Accumulated Growth Rate(%) 2001-  
+```python
+import nbsc
 
-A07040F01   Retail Sales of Enterprises above Designated Size, Automobile, Current Period(100 million yuan) 2001-  
-A07040F02   Retail Sales of Enterprises above Designated Size, Automobile, Accumulated(100 million yuan) 2001-  
-A07040F03   Retail Sales of Enterprises above Designated Size, Automobile, Growth Rate (The same period last year=100)(%) 2001-  
-A07040F04   Retail Sales of Enterprises above Designated Size, Automobile, Accumulated Growth Rate(%) 2001-  
+# Monthly CPI year-on-year (same month last year = 100)
+cpi_yoy = nbsc.get_annual_inflation("2021")
 
-A060101     Investment of Real Estate , Accumulated(100 million yuan) 2000-  
-A060102     Investment of Real Estate , Accumulated Growth Rate(%)2000-  
-A060103     Investment in Auxiliary Projects, Accumulated(100 million yuan) 2006-2013  
-A060104     Investment in Auxiliary Projects, Accumulated Growth Rate(%) 2007 - 2014  
-A060105     Total Investment in Residential Buildings in Real Estate Development, Accumulated(100 million yuan) 2000-  
-A060106     Total Investment in Residential Buildings in Real Estate Development, Accumulated Growth Rate(%) 2000-  
-A060107     Investment in Residential Buildings, Housing Below 90 Square Meters, Accumulated(100 million yuan) 2007-2023  
-A060108     Investment in Residential Buildings, Housing Below 90 Square Meters, Accumulated Growth Rate(%) 2008-2023  
-A060109     Investment in Residential Buildings, Housing Above 144 Square Meters, Accumulated(100 million yuan) 2008-2023  
-A06010A     Investment in Residential Buildings, Housing Above 144 Square Meters, Accumulated Growth Rate(%) 2009-2023  
-A06010B     Investment in Residential Buildings, Villas and High-grade Apartments, Accumulated(100 million yuan) 2006-2019  
-A06010C     Investment in Residential Buildings, Villas and High-grade Apartments, Accumulated Growth Rate(%) 2007-2019  
-A06010D     Investment in Office Buildings, Accumulated(100 million yuan) 2000-  
-A06010E     Investment in Office Buildings, Accumulated Growth Rate(%) 2000-  
-A06010F     Investment in Houses for Business Use, Accumulated(100 million yuan) 2000-  
-A06010G     Investment in Houses for Business Use, Accumulated Growth Rate(%) 2000-  
-A06010H     Investment of Real Estate,others, Accumulated(100 million yuan) 2000-  
-A06010I     Investment of Real Estate, others, Accumulated Growth Rate(%) 2000-  
-A06010J     Investment of Real Estate,Construction, Accumulated(100 million yuan) 2002-  
-A06010K     Investment of Real Estate, Construction, Accumulated Growth Rate(%) 2002-  
-A06010L     Investment of Real Estate,Installation, Accumulated(100 million yuan) 2002-  
-A06010M     Investment of Real Estate, Installation, Accumulated Growth Rate(%) 2002-  
-A06010N     Investment of Real Estate,Purchase of Equipment and Industrial Equipment, Accumulated(100 million yuan) 2002-  
-A06010O     Investment of Real Estate, Purchase of Equipment and Industrial Equipment, Accumulated Growth Rate(%) 2002-  
-A06010P     Investment of Real Estate,others, Accumulated(100 million yuan) 2002-  
-A06010Q     Investment of Real Estate, others, Accumulated Growth Rate(%) 2002-  
-A06010R     Investment of Real Estate,Land Acquisition Costs, Accumulated(100 million yuan) 2002-  
-A06010S     Investment of Real Estate, Land Acquisition Costs, Accumulated Growth Rate(%) 2002-  
-A06010T     Total Investment Planned for Real Estate Development, Accumulated(100 million yuan) 2000-  
-A06010U     Total Investment Planned for Real Estate Development, Accumulated Growth Rate(%) 2000-  
-A06010V     Newly Increased Fixed Assets of Real Estate Development, Accumulated(100 million yuan) 2000-2023  
-A06010W     Newly Increased Fixed Assets of Real Estate Development, Accumulated Growth Rate(%) 2000-2023  
+# Monthly CPI month-on-month (preceding month = 100)
+cpi_mom = nbsc.get_recent_inflation("2025")
 
-A060301     Development and Sales of Real Estate, Land Space Purchased, Accumulated(10000 sq.m) 2000-2023  
-A060302     Development and Sales of Real Estate, Land Space Purchased, Accumulated Growth Rate(%) 2000-2022  
-A060303     Development and Sales of Real Estate, Transaction Value of Land, Accumulated(100 million yuan) 2004-2022  
-A060304     Development and Sales of Real Estate, Transaction Value of Land, Accumulated Growth Rate(%) 2005-2022  
+# Long-term monthly CPI from 2001
+cpi_long = nbsc.get_inflation_from_2001()
+```
 
+## What changed in 1.0.0
 
+NBS retired the `easyquery.htm` API (returns 403 since May 2026). Version 1.0.0 replaces the transport layer with the new UUID-based API under `data.stats.gov.cn/dg/website/publicrelease/web/external/`.
 
+**Breaking changes:**
+- Transport fully rewritten. `load_nbs_web()` signature preserved but uses UUID-based lookup via `codes.json`.
+- Only **CPI inflation** series ported. Other modules (`gdp`, `household`, `auto_retail`, `investment`, `land`) raise `NotImplementedError`.
+- Requires Python >= 3.10.
 
+**Architecture:**
+- `codes.json` maps legacy `A0xxx` codes to UUID catalog/indicator pairs. Codes may span multiple NBS "period leaves" (e.g., 2021-2025 and 2026- are separate catalogs) — stitched automatically.
+- `fetch_series(cid, indicator_id, dts)` — low-level POST to the NBS data endpoint.
+- `_dts_from_legacy(periods, freq)` — translates old period formats (`'2016-2020'`, `'LATEST10'`) to `YYYYMMTT` range strings.
+- `scripts/discover_uuids.py` — Playwright-based tool for re-discovering UUIDs after NBS reshuffles.
 
+**Verified against official NBS press releases** (May 2026): all values match exactly.
+
+## Available series
+
+### CPI — same month last year = 100 (YoY)
+
+| Code | Period | Description |
+|---|---|---|
+| A01010G01 | 2021+ | Headline CPI YoY |
+| A01010101 | 2016-2020 | CPI YoY |
+| A01010201 | 1987-2015 | CPI YoY |
+
+### CPI — preceding month = 100 (MoM)
+
+| Code | Period | Description |
+|---|---|---|
+| A01030G01 | 2021+ | Headline CPI MoM |
+| A01030101 | 2016-2020 | CPI MoM |
+| A01030201 | 2001-2015 | CPI MoM |
+
+### Inflation functions
+
+| Function | Returns |
+|---|---|
+| `get_annual_inflation(first_year)` | Monthly YoY CPI as decimal (e.g., 0.012 = +1.2%) |
+| `get_recent_inflation(first_year)` | Monthly MoM CPI as decimal |
+| `get_inflation_from_2001()` | MoM CPI 2001-2020 |
+| `calculate_monthly_from_annual()` | Monthly CPI derived from annual, 1987+ |
+
+## Porting new series
+
+To add GDP, real estate, or other series:
+
+1. Run `scripts/discover_uuids.py` through a proxy to find catalog/indicator UUIDs
+2. Add entries to `nbsc/codes.json`
+3. Replace `NotImplementedError` in the module with a `load_nbs_web()` call
+
+## Legacy 0.1.x
+
+<details>
+<summary>Full code list from 0.1.x (all codes below are dead)</summary>
+
+### Consumer Price Index (CPI)
+**Annual CPI** (dbcode="hgnd")
+- A090201 - Consumer Price Index (1978=100)
+- A090302 - Consumer Price Index (1978=100)
+
+**Monthly CPI** (dbcode="hgyd")
+Last Year = 100:
+- A01010G01 - Consumer Price Index (The same month last year=100) 2021-
+- A01010101 - Consumer Price Index (The same month last year=100) 2016-2020
+- A01010201 - Consumer Price Index (The same month last year=100) 1987-2015
+
+The same period last year=100:
+- A01020101 - Consumer Price Index (The same period last year=100) 2016-
+- A01020201 - Consumer Price Index (The same period last year=100) 1995-2015
+
+Preceding month=100:
+- A01030G01 - Consumer Price Index (preceding month=100) 2021-
+- A01030101 - Consumer Price Index (preceding month=100) 2016-2020
+- A01030201 - Consumer Price Index (preceding month=100) 2001-2015
+
+### GDP (annual)
+- A020102 - Gross Domestic Product (GDP)
+- A020106 - Per Capita GDP
+- A020101 - Gross National Income
+
+### Other series
+See the [0.1.x release](https://github.com/mbk-dev/nbsc/tree/ec0c40d) for the full list of real estate investment, household, auto retail, and land series codes.
+
+</details>
