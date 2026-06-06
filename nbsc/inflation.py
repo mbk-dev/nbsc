@@ -16,10 +16,11 @@ def get_inflation_from_2001() -> pd.Series:
         series="A01030201", periods="2001-2015", freq="month"
     )
     s = pd.concat([s_2016, s_2001], axis=0, join="outer", copy="false")
+    s.index = s.index.to_period("M")
+    s = s.sort_index()
     s = check_for_zero(s)
     s = (s - 100.0) / 100
-    s.index = s.index.to_period("M")
-    return s.sort_index(ascending=False)
+    return s
 
 
 def get_recent_inflation(first_year: str = "2016") -> pd.Series:
@@ -31,7 +32,7 @@ def get_recent_inflation(first_year: str = "2016") -> pd.Series:
     )    
     
     s_2021.index = s_2021.index.to_period("M")
-    s_2021.sort_index(ascending=False, inplace=True)
+    s_2021 = s_2021.sort_index()
     s_2021 = check_for_zero(s_2021)
     return (s_2021 - 100.0) / 100
 
@@ -77,7 +78,7 @@ def get_annual_inflation(first_year: str = "1987") -> pd.Series:
         
     s = pd.concat([s_old, s_new], axis=0, join="outer", copy="false")
     s.index = s.index.to_period("M")
-    s.sort_index(ascending=False, inplace=True)
+    s.sort_index(inplace=True)
     s = check_for_zero(s)
     return (s - 100.0) / 100.0
 
@@ -89,8 +90,12 @@ def calculate_monthly_from_annual(last_date: str = "2000-12") -> pd.Series:
     This function is used for periods where no official monthly CPI data is available.
     `last_date` should be 2000-12 or later.
     """
-    s_annual = get_annual_inflation()
-    s_monthly = get_inflation_from_2001()
+    # The backfill below iterates newest -> oldest and appends ever-older
+    # labels to the tail, which keeps the working series sorted only while
+    # it is in descending order — so the (ascending) public series are
+    # re-sorted internally. The final result is returned ascending.
+    s_annual = get_annual_inflation().sort_index(ascending=False)
+    s_monthly = get_inflation_from_2001().sort_index(ascending=False)
     if pd.to_datetime(last_date, format="%Y-%m") < pd.to_datetime(
         "2000-12", format="%Y-%m"
     ):
@@ -106,10 +111,11 @@ def calculate_monthly_from_annual(last_date: str = "2000-12") -> pd.Series:
 
 def check_for_zero(s: pd.Series) -> pd.Series:
     """
-    If the last CPI value is zero, skip it.
+    If the newest CPI value is zero, drop it.
 
-    NBSC shows zero value always for the last month statistics if the official data is not published yet.
+    NBSC shows zero value always for the last month statistics if the official
+    data is not published yet. Expects an ascending-sorted series.
     """
-    if len(s) > 0 and s.iloc[0] == 0:
-        s = s.iloc[1:]
+    if len(s) > 0 and s.iloc[-1] == 0:
+        s = s.iloc[:-1]
     return s
