@@ -9,7 +9,9 @@ Re-discover UUIDs for the NBS public-data API after a reshuffle. The NBS periodi
 
 ## When to Use
 
-- `POST getEsDataByCidAndDt` returns empty `data`, `state != 20000`, or HTTP error
+- `POST stream/esData` returns empty `data`, `state != 20000`, or HTTP error
+  (until 2026-06 the endpoint was named `getEsDataByCidAndDt` — NBS renames
+  endpoints without notice; UUIDs usually survive the rename)
 - NBS announces a site redesign or data reorganization
 - Adding a new series (GDP, PPI, retail, etc.) that isn't in `codes.json` yet
 
@@ -63,17 +65,17 @@ Expand the Element-UI tree on the left. Click the target indicator (e.g. 居民�
 
 Look for three request types in `captured`:
 
-1. **`queryIndexTreeAsync`** — returns tree nodes with `_id` (catalog UUID), `isLeaf`, `_name`
-2. **`queryIndicatorsByCid`** — returns indicator list with `_id` (indicator UUID), `_name`, `du_name`
-3. **`getEsDataByCidAndDt`** — POST body contains `cid`, `indicatorIds`, `rootId`, `dts`
+1. **`new/queryIndexTreeAsync`** — returns tree nodes with `_id` (catalog UUID), `isLeaf`, `_name`
+2. **`new/queryIndicatorsByCid`** — returns indicator list with `_id` (indicator UUID), `_name`, `du_name`
+3. **`stream/esData`** — POST body contains `cid`, `indicatorIds`, `rootId`, `dts`
 
-Parse the POST body of `getEsDataByCidAndDt` to get the exact `cid` and `indicatorIds` the SPA used.
+Parse the POST body of `stream/esData` to get the exact `cid` and `indicatorIds` the SPA used.
 
 ### 4. Verify with bare curl
 
 ```bash
 curl -s -X POST \
-  'https://data.stats.gov.cn/dg/website/publicrelease/web/external/getEsDataByCidAndDt' \
+  'https://data.stats.gov.cn/dg/website/publicrelease/web/external/stream/esData' \
   -H 'Content-Type: application/json' \
   -H 'Referer: https://data.stats.gov.cn/dg/website/page.html' \
   -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36' \
@@ -99,7 +101,7 @@ Add or update entry:
 ## Common Mistakes
 
 - **Wrong SPA route:** `countryMonthData` is foreign countries, not China domestic. Use `monthData` for CPI.
-- **Bare curl on GET endpoints:** `queryIndexTreeAsync` triggers a WAF JS challenge from curl. Only `getEsDataByCidAndDt` (POST) works without browser cookies.
+- **Bare curl on GET endpoints:** `queryIndexTreeAsync` triggers a WAF JS challenge from curl. Only `stream/esData` (POST) works without browser cookies.
 - **Assuming same indicator UUID across period leaves:** NBS splits historical data into period-based catalog leaves (e.g. 2026-, 2021-2025, 2016-2020, -2015). Each leaf may have different indicator UUIDs — always verify via `queryIndicatorsByCid` per leaf.
 - **Missing headers on POST:** `Content-Type: application/json` and `Referer: https://data.stats.gov.cn/dg/website/page.html` are required. Without `Referer` the WAF may block.
 

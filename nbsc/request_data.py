@@ -2,6 +2,10 @@
 
 Replaces the dead easyquery.htm endpoint with the 3-step public-data API
 under /dg/website/publicrelease/web/external/.
+
+2026-06: NBS renamed the data endpoint from getEsDataByCidAndDt to
+stream/esData (catalog UUIDs were unaffected). The tree/indicator GET
+endpoints live under external/new/ (see scripts/discover_uuids.py).
 """
 
 import json
@@ -16,7 +20,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 _API_BASE = "https://data.stats.gov.cn/dg/website/publicrelease/web/external"
-_POST_URL = f"{_API_BASE}/getEsDataByCidAndDt"
+_POST_URL = f"{_API_BASE}/stream/esData"  # until 2026-06: getEsDataByCidAndDt
 
 _HEADERS = {
     "Content-Type": "application/json",
