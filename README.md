@@ -94,6 +94,22 @@ ppi = nbsc.get_ppi_yoy("2020")
 | `get_ppi_yoy(first_year)` | Ex-factory PPI (same month last year = 100) | 1996 |
 | `get_ppi_mom(first_year)` | Ex-factory PPI (preceding month = 100) | 2011 |
 
+## NBS endpoint rename history
+
+NBS renames its endpoints without notice; the catalog UUIDs have so far survived every rename.
+
+| Period | Data endpoint | nbsc version |
+|---|---|---|
+| until ~2026-05 | `easyquery.htm` (legacy API) | 0.1.x |
+| 2026-05-27 … early 2026-06 | `external/getEsDataByCidAndDt` | 1.0.0 |
+| since early 2026-06 | `external/stream/esData` | 1.0.1+ |
+
+Since 1.1.0 the transport tries all known endpoint names on HTTP 404/405 and
+raises `NbsEndpointError` naming every attempted URL when all fail. For a
+production hot-patch after the next rename, set the `NBSC_DATA_URL`
+environment variable to the new data URL (overrides the built-in candidates)
+and re-discover via `scripts/discover_uuids.py` at leisure.
+
 ## What changed in 1.0.0
 
 NBS retired the `easyquery.htm` API (returns 403 since May 2026). Version 1.0.0 replaces the transport layer with the new UUID-based API under `data.stats.gov.cn/dg/website/publicrelease/web/external/`.

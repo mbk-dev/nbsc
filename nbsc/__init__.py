@@ -80,4 +80,9 @@ from nbsc.land import (
     get_land_transaction_value_accumulated,
     get_land_transaction_growth_rate,
 )
-from nbsc.request_data import load_nbs_web
+from nbsc.request_data import (
+    NbsApiError,
+    NbsEndpointError,
+    NbsWafError,
+    load_nbs_web,
+)

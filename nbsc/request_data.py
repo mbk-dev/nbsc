@@ -9,6 +9,7 @@ endpoints live under external/new/ (see scripts/discover_uuids.py).
 """
 
 import json
+import os
 import re
 import warnings
 from importlib import resources
@@ -20,7 +21,35 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 _API_BASE = "https://data.stats.gov.cn/dg/website/publicrelease/web/external"
-_POST_URL = f"{_API_BASE}/stream/esData"  # until 2026-06: getEsDataByCidAndDt
+
+# Known data-endpoint names, newest first. NBS renames the endpoint without
+# notice (2026-06: getEsDataByCidAndDt -> stream/esData); on HTTP 404/405 the
+# next candidate is tried automatically.
+_DATA_ENDPOINT_CANDIDATES = ("stream/esData", "getEsDataByCidAndDt")
+
+
+class NbsEndpointError(RuntimeError):
+    """Every known data-endpoint URL answered 404/405 — NBS likely renamed it again."""
+
+
+class NbsWafError(RuntimeError):
+    """The WAF returned a JS challenge page instead of JSON."""
+
+
+class NbsApiError(RuntimeError):
+    """The API answered, but with a non-success state."""
+
+
+def _data_urls() -> list[str]:
+    """Data-endpoint URLs to try, in order.
+
+    The NBSC_DATA_URL environment variable overrides the built-in candidates —
+    a production hot-patch for the next endpoint rename, no release required.
+    """
+    override = os.getenv("NBSC_DATA_URL")
+    if override:
+        return [override]
+    return [f"{_API_BASE}/{name}" for name in _DATA_ENDPOINT_CANDIDATES]
 
 _HEADERS = {
     "Content-Type": "application/json",
@@ -209,21 +238,46 @@ def fetch_series(
     }
 
     session = _make_session()
-    resp = session.post(_POST_URL, json=body, timeout=_DEFAULT_TIMEOUT)
+    urls = _data_urls()
+    resp = None
+    for attempt, url in enumerate(urls):
+        resp = session.post(url, json=body, timeout=_DEFAULT_TIMEOUT)
+        if resp.status_code in (404, 405):
+            continue
+        if attempt > 0:
+            warnings.warn(
+                f"NBS data endpoint fallback: {url} answered while"
+                f" {urls[:attempt]} returned 404/405 — update"
+                " _DATA_ENDPOINT_CANDIDATES so the working URL is primary",
+                stacklevel=2,
+            )
+        break
+    if resp is None or resp.status_code in (404, 405):
+        raise NbsEndpointError(
+            f"All known NBS data endpoints returned 404/405: {urls}."
+            " NBS has likely renamed the endpoint again — re-discover it"
+            " (see .claude/skills/nbs-data-discovery) or hot-patch via the"
+            " NBSC_DATA_URL environment variable."
+        )
     resp.raise_for_status()
 
     if resp.headers.get("Content-Type", "").startswith("text/html"):
-        raise RuntimeError("WAF JS challenge received instead of JSON — check headers")
+        raise NbsWafError("WAF JS challenge received instead of JSON — check headers")
 
     payload = resp.json()
     state = payload.get("state")
     if state != 20000:
-        raise RuntimeError(
+        raise NbsApiError(
             f"NBS API error: state={state}, message={payload.get('message')}"
         )
 
     data = payload.get("data", [])
     if not data:
+        warnings.warn(
+            f"NBS returned no data for cid={cid}, dts={dts}: either nothing is"
+            " published in this range or the UUIDs in codes.json are stale",
+            stacklevel=2,
+        )
         return pd.Series(dtype="float64")
 
     records: dict[pd.Timestamp, float] = {}
